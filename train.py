@@ -23,46 +23,14 @@ flags.DEFINE_string('devdata', 'data/dev_', 'devdata')
 flags.DEFINE_string('device', '/cpu:0', 'device')
 flags.DEFINE_integer('early_stopping', 10, 'Tolerance for early stopping (# of epochs).')
 
-# checkpoint_dir = os.path.join(task.train_dir, 'checkpoint')
 tflog_dir = os.path.join('data/', 'tflog')
-# checkpoint_name = task_name + '-model'
-# checkpoint_dir = os.path.join(task.train_dir, 'checkpoints')
-# checkpoint_path = os.path.join(checkpoint_dir, checkpoint_name)
-
-# # @TODO: move calculation into `task file`
-# trainset = task.read_trainset(epochs=1)
-# class_weights = pd.Series(Counter([l for _, l in trainset]))
-# class_weights = 1/(class_weights/class_weights.mean())
-# class_weights = class_weights.to_dict()
-#
-# vocab = task.read_vocab()
-# labels = task.read_labels()
-#
-# classes = max(labels.values())+1
-# vocab_size = task.vocab_size
-#
-# labels_rev = {int(v): k for k, v in labels.items()}
-# vocab_rev = {int(v): k for k, v in vocab.items()}
-#
 
 word_embedding = utils.load_embedding(FLAGS.embedding_file)
 
 def HAN_model_1(session, restore_only=False):
   """Hierarhical Attention Network"""
-  # import tensorflow as tf
-  # try:
-  #   from tensorflow.contrib.rnn import GRUCell, MultiRNNCell, DropoutWrapper
-  # except ImportError:
-  #   MultiRNNCell = tf.nn.rnn_cell.MultiRNNCell
-  #   GRUCell = tf.contrib.rnn_cell.GRUCell
-  # from bn_lstm import BNLSTMCell
   from models import HAN
-
   is_training = tf.placeholder(dtype=tf.bool, name='is_training')
-
-  # cell = BNLSTMCell(80, is_training) # h-h batchnorm LSTMCell
-  # cell = MultiRNNCell([cell]*5)
-  #cell = tf.contrib.rnn_cell.BasicLSTMCell(FLAGS.hidden_size)
   cell = tf.contrib.rnn.GRUCell
   model = HAN(
       #vocab_size=vocab_size,
@@ -80,40 +48,13 @@ def HAN_model_1(session, restore_only=False):
       device=FLAGS.device,
       dropout_keep_proba=0.5,
       # max_grad_norm=args.max_grad_norm,
-
-      # is_training=is_training,
   )
-
-  # saver = tf.train.Saver(tf.global_variables())
-  # checkpoint = tf.train.get_checkpoint_state(checkpoint_dir)
-  # if checkpoint:
-  #   print("Reading model parameters from %s" % checkpoint.model_checkpoint_path)
-  #   saver.restore(session, checkpoint.model_checkpoint_path)
-  # elif restore_only:
-  #   raise FileNotFoundError("Cannot restore model")
-  # else:
-  #   print("Created model with fresh parameters")
-  #   session.run(tf.global_variables_initializer())
-
-  # return model, saver
   return model
 
 def AN_model_1(session, restore_only=False):
   """Hierarhical Attention Network"""
-  # import tensorflow as tf
-  # try:
-  #   from tensorflow.contrib.rnn import GRUCell, MultiRNNCell, DropoutWrapper
-  # except ImportError:
-  #   MultiRNNCell = tf.nn.rnn_cell.MultiRNNCell
-  #   GRUCell = tf.contrib.rnn_cell.GRUCell
-  # from bn_lstm import BNLSTMCell
   from models import AN
-
   is_training = tf.placeholder(dtype=tf.bool, name='is_training')
-
-  # cell = BNLSTMCell(80, is_training) # h-h batchnorm LSTMCell
-  # cell = MultiRNNCell([cell]*5)
-  # cell = tf.contrib.rnn_cell.BasicLSTMCell(FLAGS.hidden_size)
   cell = tf.contrib.rnn.GRUCell
   model = AN(
       #vocab_size=vocab_size,
@@ -129,44 +70,11 @@ def AN_model_1(session, restore_only=False):
       device=FLAGS.device,
       dropout_keep_proba=0.5,
       # max_grad_norm=args.max_grad_norm,
-
-      # is_training=is_training,
   )
-
-  # saver = tf.train.Saver(tf.global_variables())
-  # checkpoint = tf.train.get_checkpoint_state(checkpoint_dir)
-  # if checkpoint:
-  #   print("Reading model parameters from %s" % checkpoint.model_checkpoint_path)
-  #   saver.restore(session, checkpoint.model_checkpoint_path)
-  # elif restore_only:
-  #   raise FileNotFoundError("Cannot restore model")
-  # else:
-  #   print("Created model with fresh parameters")
-  #   session.run(tf.global_variables_initializer())
-
-  # return model, saver
   return model
 
 model_fn = HAN_model_1
 # model_fn = AN_model_1
-
-# def decode(ex):
-#   print('text: ' + '\n'.join([' '.join([vocab_rev.get(wid, '<?>') for wid in sent]) for sent in ex[0]]))
-#   print('label: ', labels_rev[ex[1]])
-#
-# print('data loaded')
-
-# def batch_iterator(dataset, batch_size, max_epochs):
-#   for i in range(max_epochs):
-#     xb = []
-#     yb = []
-#     for ex in dataset:
-#       x, y = ex
-#       xb.append(x)
-#       yb.append(y)
-#       if len(xb) == batch_size:
-#         yield xb, yb
-#         xb, yb = [], []
 
 def batch_iterator(datax, datay, batch_size):
     xb = []
