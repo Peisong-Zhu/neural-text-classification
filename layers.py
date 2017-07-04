@@ -200,9 +200,6 @@ class BiDynamicRNNLayer(Layer):
         # self.inputs = layer.outputs
         self.inputs = inputs
 
-        # print("  [TL] BiDynamicRNNLayer %s: n_hidden:%d in_dim:%d in_shape:%s cell_fn:%s dropout:%s n_layer:%d" %
-        #       (self.name, n_hidden, self.inputs.get_shape().ndims, self.inputs.get_shape(), cell_fn.__name__, dropout, n_layer))
-
         # Input dimension should be rank 3 [batch_size, n_steps(max), n_features]
         try:
             self.inputs.get_shape().with_rank(3)
@@ -312,26 +309,6 @@ def task_specific_attention(inputs, output_size,
 
         input_projection = layers.fully_connected(inputs, output_size,
                                                   activation_fn=activation_fn,
-                                                  scope=scope)
-        # attention_weights = tf.nn.softmax(
-        #     tf.multiply(input_projection, attention_context_vector)
-        # )
-        # # weighted_projection = tf.multiply(input_projection, attention_weights)
-        # weighted_projection = tf.multiply(inputs, attention_weights)
-        # outputs = tf.reduce_sum(weighted_projection, axis=1)
-
-        # print("attention_context_vector：")
-        # print str(attention_context_vector.get_shape())
-        # print("input_projection：")
-        # print str(input_projection.get_shape())
-        # print("softmax：")
-        # print str(tf.multiply(input_projection, attention_context_vector).get_shape())
-        # print("attention_weights：")
-        # print str(attention_weights.get_shape())
-        # print("weighted_projection：")
-        # print str(weighted_projection.get_shape())
-        # print("outputs：")
-        # print str(outputs.get_shape())
 
         attention_weights = tf.nn.softmax(tf.reduce_sum(tf.multiply(input_projection, attention_context_vector), axis=2))
         attention_weights = tf.expand_dims(attention_weights, -1)
