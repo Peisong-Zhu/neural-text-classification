@@ -59,10 +59,6 @@ class HAN():
             # [document]
             self.labels = tf.placeholder(shape=(None,), dtype=tf.int32, name='labels')
 
-            # (self.document_size,
-            #  self.sentence_size,
-            #  self.word_size) = tf.unstack(tf.shape(self.inputs))
-
             # self._init_embedding(scope)
             self.get_embedding(scope)
             #(self.batch_size, self.sentence_size, self.word_size, self.embedding_size) = self.inputs_embedding.shape
@@ -120,11 +116,6 @@ class HAN():
                     n_hidden = self.hidden_size,
                     sequence_length = word_level_lengths,
                 )
-
-                # word_encoder_output, _ = BiDynamicRNNLayer(
-                #     self.word_cell, self.word_cell,
-                #     word_level_inputs, word_level_lengths,
-                #     scope=scope)
 
                 word_encoder_output = word_birnn.outputs
 
@@ -239,10 +230,6 @@ class AN():
             # [document]
             self.labels = tf.placeholder(shape=(None,), dtype=tf.int32, name='labels')
 
-            # (self.document_size,
-            #  self.sentence_size,
-            #  self.word_size) = tf.unstack(tf.shape(self.inputs))
-
             # self._init_embedding(scope)
             self.get_embedding(scope)
             # (self.batch_size, self.sentence_size, self.word_size, self.embedding_size) = self.inputs_embedding.shape
@@ -297,12 +284,7 @@ class AN():
                     n_hidden=self.hidden_size,
                     sequence_length=word_level_lengths,
                 )
-
-                # word_encoder_output, _ = BiDynamicRNNLayer(
-                #     self.word_cell, self.word_cell,
-                #     word_level_inputs, word_level_lengths,
-                #     scope=scope)
-
+                
                 word_encoder_output = word_birnn.outputs
 
                 with tf.variable_scope('attention') as scope:
@@ -344,10 +326,3 @@ class AN():
             fd[self.labels] = y1
         fd[self.is_training] = is_training
         return fd
-
-# inputs = [[1, 2, 3], [4, 2, 1], [4, 5, 6], [3, 2, 5]]
-# em = tf.constant(inputs)
-# mat = tf.nn.embedding_lookup(em, [1, 3])
-# with tf.Session() as sess:
-#     res = sess.run(mat)
-#     print res
